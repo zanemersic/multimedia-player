@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="Grid" x:Key="PurpleGrid">
+        <Setter Property="Background" Value="#BF00FF"/>
+    </Style>
+
+    <Style TargetType="Grid" x:Key="MagentaGrid">
+        <Setter Property="Background" Value="#e175ff"/>
+    </Style>
+    
+</ResourceDictionary>

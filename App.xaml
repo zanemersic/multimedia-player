@@ -1,0 +1,23 @@
+﻿<Application x:Class="MultimedijskiPredvajalnik.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MultimedijskiPredvajalnik"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/Playlist.xaml"/>
+                <ResourceDictionary Source="/Styles/PinkTextBox.xaml"/>
+                <ResourceDictionary Source="/Styles/PlayerButtons.xaml"/>
+                <ResourceDictionary Source="/Styles/ControlPanel.xaml"/>
+                <ResourceDictionary Source="/Styles/Menu.xaml"/>
+                <ResourceDictionary Source="/Styles/Cover.xaml"/>
+                <ResourceDictionary Source="/Styles/CoverText.xaml"/>
+                <ResourceDictionary Source="/Styles/ProgressBar.xaml"/>
+                <ResourceDictionary Source="/Styles/Time.xaml"/>
+                <ResourceDictionary Source="/Styles/MediaElement.xaml"/>
+                <ResourceDictionary Source="/Styles/GridColor.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

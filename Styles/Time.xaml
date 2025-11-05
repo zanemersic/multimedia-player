@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="TextBlock" x:Key="TimeBegin">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0,9,5,0"/>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="TimeEnd" BasedOn="{StaticResource TimeBegin}">
+        <Setter Property="Margin" Value="3,9,45,0"/>
+    </Style>
+</ResourceDictionary>
