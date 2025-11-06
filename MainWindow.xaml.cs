@@ -123,6 +123,16 @@ namespace MultimedijskiPredvajalnik
             MediaPlayer.Position = TimeSpan.FromSeconds(vm.SliderValue);
         }
 
+        private void ListViewItem_RightClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is ListViewItem item && item.DataContext is MediaFile file)
+            {
+                var vm = DataContext as PlayerViewModel;
+                vm?.ShowFileInfoCommand.Execute(file);
+            }
+        }
+
+
 
     }
 }

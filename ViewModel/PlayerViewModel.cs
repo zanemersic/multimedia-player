@@ -57,7 +57,7 @@ namespace MultimedijskiPredvajalnik.ViewModel
         }
 
         public ICommand TogglePlayPauseCommand { get; }
-        public ICommand InfoCommand { get; }
+        public ICommand ShowFileInfoCommand { get; }
         public ICommand ExitCommand { get; }
 
         public PlayerViewModel()
@@ -69,13 +69,20 @@ namespace MultimedijskiPredvajalnik.ViewModel
                 new MediaFile { Title = "Snowfall", Author = "Oneheart", Path = "Resources/snowfall.mp4", Cover = "pack://application:,,,/Resources/snowfall.png" }
             };
 
-            InfoCommand = new RelayCommand(_ => ShowFileInfo(), _ => SelectedFile != null);
             ExitCommand = new RelayCommand(_ => Application.Current.Shutdown());
             TogglePlayPauseCommand = new RelayCommand(_ => TogglePlayPause());
-
+            ShowFileInfoCommand = new RelayCommand(ShowFileInfo);
 
             timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
             timer.Tick += UpdateSlider;
+        }
+
+        private void ShowFileInfo(object parameter)
+        {
+            if (parameter is MediaFile file)
+            {
+                MessageBox.Show($"Title: {file.Title}\nAuthor: {file.Author}", "Information");
+            }
         }
 
         private void TogglePlayPause()
@@ -102,12 +109,6 @@ namespace MultimedijskiPredvajalnik.ViewModel
             SelectedFile.IsPlaying = IsPlaying;
         }
 
-
-        private void ShowFileInfo()
-        {
-            if (SelectedFile != null)
-                MessageBox.Show($"Ime medija: {SelectedFile.Title}", "Podrobnosti");
-        }
 
         private TimeSpan currentPosition;
         public TimeSpan CurrentPosition

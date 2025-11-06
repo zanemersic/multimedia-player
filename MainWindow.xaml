@@ -76,6 +76,8 @@
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource PlaylistItem}">
                                 <EventSetter Event="MouseDoubleClick"
                                              Handler="ListViewItem_DoubleClick"/>
+                                <EventSetter Event="MouseRightButtonUp"
+                                             Handler="ListViewItem_RightClick"/>
                             </Style>
                         </ListView.ItemContainerStyle>
 
