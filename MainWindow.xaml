@@ -1,4 +1,5 @@
 ﻿<Window x:Class="MultimedijskiPredvajalnik.MainWindow"
+        xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,7 +11,8 @@
     <DockPanel>
         <Menu Style="{StaticResource Menu}">
             <MenuItem Header="_Datoteka">
-                <MenuItem Header="_Izhod" Click="Exit_Click"/>
+                <MenuItem Header="_Izhod" 
+                          Command="{Binding ExitCommand}"/>
             </MenuItem>
             <MenuItem Header="_Seznam">
                 <MenuItem Header="Dodaj statično"/>
@@ -41,7 +43,12 @@
                 <Grid Grid.Column="2" Style="{StaticResource MagentaGrid}"/>
 
                 <Grid Grid.Column="1" Style="{StaticResource MagentaGrid}">
-                    <MediaElement x:Name="MediaPlayer" Style="{StaticResource MediaPlayer}" MediaFailed="MediaPlayer_MediaFailed" MediaOpened="MediaPlayer_MediaOpened">
+                    <MediaElement x:Name="MediaPlayer" 
+                                  Style="{StaticResource MediaPlayer}" 
+                                  Source="{Binding CurrentMediaSource}" 
+                                  MediaFailed="MediaPlayer_MediaFailed" 
+                                  MediaEnded="MediaPlayer_MediaEnded"
+                                  MediaOpened="MediaPlayer_MediaOpened">
                         
                     </MediaElement>
                 </Grid>
@@ -56,9 +63,20 @@
                         <TextBlock Text="PLAYLIST" Style="{StaticResource PinkText}"/>
                     </Viewbox>
 
-                    <ListView Style="{StaticResource Playlist}" x:Name="PlaylistView" MouseDoubleClick="Playlist_DoubleClick" MouseRightButtonUp="Playlist_RightClick" Grid.Row="1">
+                    <ListView Style="{StaticResource Playlist}" x:Name="PlaylistView" 
+                              ItemsSource="{Binding Playlist}" 
+                              SelectedItem="{Binding SelectedFile, Mode=TwoWay}" 
+                              Grid.Row="1">
+                        <ListView.InputBindings>
+                            <MouseBinding MouseAction="LeftDoubleClick"
+                                          Command="{Binding TogglePlayPauseCommand}"/>
+                        </ListView.InputBindings>
+                        
                         <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem" BasedOn="{StaticResource PlaylistItem}"/>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource PlaylistItem}">
+                                <EventSetter Event="MouseDoubleClick"
+                                             Handler="ListViewItem_DoubleClick"/>
+                            </Style>
                         </ListView.ItemContainerStyle>
 
                         <ListView.ItemTemplate>
@@ -101,9 +119,12 @@
                         
                         <StackPanel Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock x:Name="CurrentTimeText" Text="0:00" Style="{StaticResource TimeBegin}"/>
-                                <Slider x:Name="Slider" Style="{StaticResource Slider}"/>
-                                <TextBlock x:Name="TotalTimeText" Text="5:30" Style="{StaticResource TimeEnd}"/>
+                                <TextBlock Text="{Binding CurrentTimeDisplay}" Style="{StaticResource TimeBegin}"/>
+                                <Slider x:Name="Slider" 
+                                        Style="{StaticResource ProgressSlider}"
+                                        Thumb.DragStarted="ProgressSlider_DragStarted"
+                                        Thumb.DragCompleted="ProgressSlider_DragCompleted"/>
+                                <TextBlock Text="{Binding TotalTimeDisplay}" Style="{StaticResource TimeEnd}"/>
                             </StackPanel>
                             
                             <StackPanel Style="{StaticResource ControlPanel}">
@@ -115,8 +136,8 @@
                                     <Image Source="{StaticResource IconPrevious}"/>
                                 </Button>
 
-                                <Button Style="{StaticResource PlayPauseButton}">
-                                    
+                                <Button Style="{StaticResource PlayPauseButton}" 
+                                        Command="{Binding TogglePlayPauseCommand}">
                                 </Button>
 
                                 <Button Style="{StaticResource ControlButton}">

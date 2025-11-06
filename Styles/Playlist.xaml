@@ -22,6 +22,7 @@
     </Style>
 
     <Style TargetType="ListViewItem" x:Key="PlaylistItem">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Style.Triggers>
             <DataTrigger Binding="{Binding IsPlaying}" Value="True">
                 <Setter Property="Background" Value="#BF00FF"/>

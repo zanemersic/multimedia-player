@@ -46,5 +46,15 @@
                 <Image Source="{StaticResource IconPlay}"/>
             </Setter.Value>
         </Setter>
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <Image Source="{StaticResource IconPause}"/>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 </ResourceDictionary>

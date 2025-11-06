@@ -1,4 +1,5 @@
 ﻿using MultimedijskiPredvajalnik.Models;
+using MultimedijskiPredvajalnik.ViewModel;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,96 +11,118 @@ namespace MultimedijskiPredvajalnik
 {
     public partial class MainWindow : Window
     {
-        private DispatcherTimer timer;
-        public ObservableCollection<MediaFile> Playlist { get; set; }
 
+        private PlayerViewModel vm;
         public MainWindow()
         {
             InitializeComponent();
+            vm = new PlayerViewModel();
+            DataContext = vm;
 
-            Playlist = new ObservableCollection<MediaFile>
+            vm.PropertyChanged += (s, args) =>
             {
-                new MediaFile { Title = "90210", Author = "Travis Scott", Path = "Resources/90210.mp4", Cover = "pack://application:,,,/Resources/90210.png"},
-                new MediaFile { Title = "No Pole", Author = "Don Toliver", Path = "Resources/NoPole.mp4", Cover = "pack://application:,,,/Resources/nopole.png"},
-                new MediaFile { Title = "Snowfall", Author = "Oneheart", Path = "Resources/snowfall.mp4", Cover = "pack://application:,,,/Resources/snowfall.png" }
-            };
-
-            DataContext = this;
-
-            timer = new DispatcherTimer()
-            {
-                Interval = TimeSpan.FromMilliseconds(500)
-            };
-            timer.Tick += UpdateSlider;
-
-            Slider.Loaded += (s, e) =>
-            {
-                if (Slider.Template.FindName("PART_Track", Slider) is Track track &&
-                    track.Thumb != null)
+                if (args.PropertyName == nameof(vm.IsPlaying))
                 {
-                    track.Thumb.DragCompleted += ProgressSlider_DragCompleted;
+                    if (vm.IsPlaying)
+                        MediaPlayer.Play();
+                    else
+                        MediaPlayer.Pause();
+                }
+                else if (args.PropertyName == nameof(vm.CurrentMediaSource))
+                {
+                    if (vm.CurrentMediaSource != null)
+                    {
+                        MediaPlayer.Source = vm.CurrentMediaSource;
+                        MediaPlayer.Play();
+                    }
                 }
             };
-        }
-
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
-        private void Playlist_DoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (((ListView)sender).SelectedItem is MediaFile file)
-            {
-                foreach (var f in Playlist)
-                    f.IsPlaying = false;
-
-                file.IsPlaying = true;
-
-                try
-                {
-                    string fullPath = System.IO.Path.GetFullPath(file.Path);
-                    MediaPlayer.Source = new Uri(fullPath, UriKind.Absolute);
-                    MediaPlayer.Play();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Napaka pri predvajanju: {ex.Message}", "Napaka", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
-        private void Playlist_RightClick(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is ListView listView && listView.SelectedItem is MediaFile file)
-            {
-                MessageBox.Show($"Ime medija: {file.Title}", "Podrobnosti", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
         }
 
         private void MediaPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
+            vm.CurrentTimeDisplay = "00:00";
+
+            if (MediaPlayer.NaturalDuration.HasTimeSpan)
+            {
+                vm.SliderMaximum = MediaPlayer.NaturalDuration.TimeSpan.TotalSeconds;
+                vm.TotalTimeDisplay = MediaPlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
+            }
+            else
+            {
+                vm.SliderMaximum = 0;
+                vm.TotalTimeDisplay = "00:00";
+            }
+
             MediaPlayer.Play();
-            Slider.Maximum = MediaPlayer.NaturalDuration.TimeSpan.TotalSeconds;
+            vm.IsPlaying = true;
+
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(500);
+            timer.Tick += (s, _) =>
+            {
+                if (vm.IsPlaying && !isDragging)
+                {
+                    vm.CurrentPosition = MediaPlayer.Position;
+
+                    vm.CurrentTimeDisplay = MediaPlayer.Position.ToString(@"mm\:ss");
+
+                    if (MediaPlayer.NaturalDuration.HasTimeSpan)
+                        vm.TotalTimeDisplay = MediaPlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
+                }
+            };
             timer.Start();
+
+        }
+
+        private void ProgressSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Math.Abs(MediaPlayer.Position.TotalSeconds - vm.SliderValue) > 1)
+                MediaPlayer.Position = TimeSpan.FromSeconds(vm.SliderValue);
+        }
+
+        private void MediaPlayer_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            vm.IsPlaying = false;
         }
 
         private void MediaPlayer_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
-            MessageBox.Show($"Napaka pri nalaganju videa: {e.ErrorException.Message}", "Napaka", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Napaka pri nalaganju videa: {e.ErrorException.Message}");
         }
 
-        private void UpdateSlider(object sender, EventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (MediaPlayer.Source != null && MediaPlayer.NaturalDuration.HasTimeSpan)
+            vm.PropertyChanged += (s, args) =>
             {
-                Slider.Value = MediaPlayer.Position.TotalSeconds;
-            }
+                if (args.PropertyName == nameof(vm.IsPlaying))
+                {
+                    if (vm.IsPlaying)
+                        MediaPlayer.Play();
+                    else
+                        MediaPlayer.Pause();
+                }
+            };
+        }
+        private void ListViewItem_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is PlayerViewModel vm)
+                vm.TogglePlayPauseCommand.Execute(null);
+        }
+
+        private bool isDragging = false;
+
+        private void ProgressSlider_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            isDragging = true;
         }
 
         private void ProgressSlider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            MediaPlayer.Position = TimeSpan.FromSeconds(Slider.Value);
+            isDragging = false;
+            MediaPlayer.Position = TimeSpan.FromSeconds(vm.SliderValue);
         }
+
+
     }
 }

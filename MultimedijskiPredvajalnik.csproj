@@ -7,6 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+    <RootNamespace>MultimedijskiPredvajalnik</RootNamespace>
+    <AssemblyName>MultimedijskiPredvajalnik</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
