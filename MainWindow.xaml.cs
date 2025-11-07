@@ -83,8 +83,17 @@ namespace MultimedijskiPredvajalnik
 
         private void MediaPlayer_MediaEnded(object sender, RoutedEventArgs e)
         {
-            vm.IsPlaying = false;
+            if (vm.IsLoopEnabled)
+            {
+                MediaPlayer.Position = TimeSpan.Zero;
+                MediaPlayer.Play();
+            }
+            else
+            {
+                vm.PlayNext();
+            }
         }
+
 
         private void MediaPlayer_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {

@@ -15,12 +15,12 @@
                           Command="{Binding ExitCommand}"/>
             </MenuItem>
             <MenuItem Header="_Seznam">
-                <MenuItem Header="Dodaj statično"/>
-                <MenuItem Header="Uredi statično"/>
+                <MenuItem Header="Dodaj statično" Command="{Binding AddCommand}"/>
+                <MenuItem Header="Uredi statično" Command="{Binding EditCommand}"/>
                 <Separator/>
-                <MenuItem Header="Dodaj"/>
-                <MenuItem Header="Uredi"/>
-                <MenuItem Header="Odstrani"/>
+                <MenuItem Header="Dodaj" Command="{Binding AddWindowCommand}"/>
+                <MenuItem Header="Uredi" Command="{Binding EditWindowCommand}"/>
+                <MenuItem Header="Odstrani" Command="{Binding RemoveCommand}"/>
             </MenuItem>
         </Menu>
 
@@ -130,11 +130,11 @@
                             </StackPanel>
                             
                             <StackPanel Style="{StaticResource ControlPanel}">
-                                <Button Style="{StaticResource ControlButton}">
+                                <Button Style="{StaticResource ShuffleButton}" Command="{Binding ShuffleCommand}">
                                     <Image Source="{StaticResource IconShuffle}"/>
                                 </Button>
 
-                                <Button Style="{StaticResource ControlButton}">
+                                <Button Style="{StaticResource ControlButton}" Command="{Binding PreviousCommand}">
                                     <Image Source="{StaticResource IconPrevious}"/>
                                 </Button>
 
@@ -142,11 +142,11 @@
                                         Command="{Binding TogglePlayPauseCommand}">
                                 </Button>
 
-                                <Button Style="{StaticResource ControlButton}">
+                                <Button Style="{StaticResource ControlButton}" Command="{Binding NextCommand}">
                                     <Image Source="{StaticResource IconNext}"/>
                                 </Button>
 
-                                <Button Style="{StaticResource ControlButton}">
+                                <Button Style="{StaticResource LoopButton}" Command="{Binding LoopCommand}">
                                     <Image Source="{StaticResource IconRepeat}"/>
                                 </Button>
                         </StackPanel>

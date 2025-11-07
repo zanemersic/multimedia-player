@@ -57,4 +57,44 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
+
+    <Style TargetType="Button" x:Key="LoopButton" BasedOn="{StaticResource ControlButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Image Source="{StaticResource IconRepeat}">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLoopEnabled}" Value="True">
+                                        <Setter Property="Opacity" Value="0.65"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="ShuffleButton" BasedOn="{StaticResource ControlButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Image Source="{StaticResource IconShuffle}">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsShuffleEnabled}" Value="True">
+                                        <Setter Property="Opacity" Value="0.65"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
