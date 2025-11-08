@@ -12,7 +12,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Vertical" Grid.Row="0">
@@ -31,5 +31,19 @@
             <Button Content="Confirm" Click="Confirm_Click" Width="100" Margin="0,0,10,0" Foreground="White" Background="#BF00FF"/>
             <Button Content="Cancel" Click="Cancel_Click" Width="100" Foreground="White" Background="#BF00FF"/>
         </StackPanel>
+
+        <Border Grid.Row="3"
+            Margin="0,20,0,0"
+            BorderBrush="#BF00FF"
+            BorderThickness="1"
+            CornerRadius="10"
+            HorizontalAlignment="Center"
+            Width="140" Height="150">
+            <Image x:Name="CoverPreview"
+               Source="/Icons/cover.png"
+               Stretch="Uniform"
+               Cursor="Hand"
+               MouseLeftButtonUp="CoverPreview_Click"/>
+        </Border>
     </Grid>
 </Window>

@@ -208,7 +208,11 @@ namespace MultimedijskiPredvajalnik.ViewModel
         private void EditSelectedFile()
         {
             if (SelectedFile == null) return;
-            MessageBox.Show($"Uredi: {SelectedFile.Title}\nAvtor: {SelectedFile.Author}", "Uredi datoteko");
+            SelectedFile.Title = "Never gonna give you up";
+            SelectedFile.Author = "Rick Astley";
+            SelectedFile.Path = "Resources/rickroll.mp4";
+            SelectedFile.Cover = "pack://application:,,,/Resources/rickcover.png";
+            OnPropertyChanged();
         }
 
         private void RemoveSelectedFile()
@@ -223,10 +227,10 @@ namespace MultimedijskiPredvajalnik.ViewModel
         {
             var newFile = new MediaFile
             {
-                Title = "Never gonna give you up",
-                Author = "Rick Astley",
-                Path = "Resources/rickroll.mp4",
-                Cover = "pack://application:,,,/Resources/rickcover.jpg"
+                Title = "2003",
+                Author = "TNT",
+                Path = "Resources/2003.mp4",
+                Cover = "pack://application:,,,/Resources/tnt.png"
             };
 
             Playlist.Add(newFile);

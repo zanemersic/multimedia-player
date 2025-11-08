@@ -41,7 +41,7 @@ namespace MultimedijskiPredvajalnik
         {
             if (string.IsNullOrWhiteSpace(TitleBox.Text) || string.IsNullOrWhiteSpace(FilePathText.Text))
             {
-                MessageBox.Show("Enter title and author of the file");
+                MessageBox.Show("Fill every field to proceed.");
                 return;
             }
 
@@ -50,7 +50,9 @@ namespace MultimedijskiPredvajalnik
                 Title = TitleBox.Text,
                 Author = AuthorBox.Text,
                 Path = FilePathText.Text,
-                Cover = "pack://application:,,,/Icons/cover.png"
+                Cover = string.IsNullOrWhiteSpace(selectedImagePath)
+                        ? "pack://application:,,,/Icons/cover.png"
+                        : selectedImagePath
             };
 
             DialogResult = true;
@@ -62,5 +64,21 @@ namespace MultimedijskiPredvajalnik
             DialogResult = false;
             Close();
         }
+
+        private void CoverPreview_Click(object sender, MouseButtonEventArgs e)
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Image Files|*.jpeg;*.jpg;*.png;*.bmp;*.gif"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                CoverPreview.Source = new BitmapImage(new Uri(dlg.FileName));
+                selectedImagePath = dlg.FileName;
+            }
+        }
+
+        private string? selectedImagePath;
     }
 }

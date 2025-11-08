@@ -19,45 +19,74 @@ namespace MultimedijskiPredvajalnik
     public partial class EditWindow : Window
     {
         private MediaFile file;
+        private string? selectedVideoPath;
+        private string? selectedImagePath;
+
         public EditWindow(MediaFile fileToEdit)
         {
             InitializeComponent();
             file = fileToEdit;
-
             TitleBox.Text = file.Title;
             AuthorBox.Text = file.Author;
             FilePathText.Text = file.Path;
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(file.Cover))
+                    CoverPreview.Source = new BitmapImage(new Uri(file.Cover, UriKind.RelativeOrAbsolute));
+            }
+            catch
+            {
+                CoverPreview.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/default.png"));
+            }
         }
 
         private void ChooseFile_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog
+            var dlg = new OpenFileDialog
             {
-                Filter = "Video files|*.mp4;*.mkv;*.avi|All files|*.*"
+                Filter = "Video Files|*.mp4;*.mkv;*.avi|All Files|*.*"
             };
 
-            if (dialog.ShowDialog() == true)
+            if (dlg.ShowDialog() == true)
             {
-                FilePathText.Text = dialog.FileName;
+                selectedVideoPath = dlg.FileName;
+                FilePathText.Text = dlg.FileName;
             }
         }
 
-        private void Confirm_Click(object sender, RoutedEventArgs e) 
+        private void CoverPreview_Click(object sender, MouseButtonEventArgs e)
+        {
+            var dlg = new OpenFileDialog
+            {
+                Filter = "Image Files|*.jpeg;*.jpg;*.png;*.bmp;*.gif"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                selectedImagePath = dlg.FileName;
+                CoverPreview.Source = new BitmapImage(new Uri(selectedImagePath));
+            }
+        }
+
+        private void Confirm_Click(object sender, RoutedEventArgs e)
         {
             file.Title = TitleBox.Text;
             file.Author = AuthorBox.Text;
-            if (!string.IsNullOrWhiteSpace(FilePathText.Text))
-            {
-                file.Path = FilePathText.Text;
-            }
 
-            DialogResult = true;
+            if (!string.IsNullOrWhiteSpace(selectedVideoPath))
+                file.Path = selectedVideoPath;
+
+            if (!string.IsNullOrWhiteSpace(selectedImagePath))
+                file.Cover = selectedImagePath;
+
             Close();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Close(); 
+            DialogResult = false;
+            Close();
         }
     }
 }
