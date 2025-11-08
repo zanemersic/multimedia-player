@@ -3,6 +3,10 @@
 A modern multimedia player built in **C# and WPF**, following the **MVVM design pattern**.  
 It supports video playback, playlist management, editing media entries, dynamic volume control, and a clean neon-styled UI.
 
+## 🎨 UI Preview
+![alt text]([http://url/to/img.png](https://media.discordapp.net/attachments/1362128869796348027/1436778771146608750/image.png?ex=6910d801&is=690f8681&hm=b1a6d10288852c1f98ae9503366360c46bcb207281e39497e09e2c15dab20c79&=&format=webp&quality=lossless))
+![alt text]([https://media.discordapp.net/attachments/1362128869796348027/1436778356786991105/image.png?ex=6910d79e&is=690f861e&hm=487494af46b9c9baf2faf6c7471c23919eec029b689a0c67fd2907906308413d&=&format=webp&quality=lossless))
+
 ## ✨ Features
 
 - 🎬 **Video playback** using WPF `MediaElement`
