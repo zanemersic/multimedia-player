@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultimedijskiPredvajalnik"
         mc:Ignorable="d"
-        Title="Multimedijski predvajalnik" Height="500" Width="900" MinHeight="500" MinWidth="900">
+        Title="Multimedia Player" Height="500" Width="900" MinHeight="500" MinWidth="900">
 
     <DockPanel>
         <Menu Style="{StaticResource Menu}">
@@ -100,7 +100,8 @@
             <Grid Grid.Row="2" Style="{StaticResource PurpleGrid}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="20*"/>
-                    <ColumnDefinition Width="80*"/>
+                    <ColumnDefinition Width="70*"/>
+                    <ColumnDefinition Width="10*"/>
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0">
@@ -118,7 +119,7 @@
 
                 <Grid Grid.Column="1">
                     <Viewbox Stretch="Uniform" StretchDirection="Both">
-                        
+
                         <StackPanel Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding CurrentTimeDisplay}" Style="{StaticResource TimeBegin}"/>
@@ -128,7 +129,7 @@
                                         Thumb.DragCompleted="ProgressSlider_DragCompleted"/>
                                 <TextBlock Text="{Binding TotalTimeDisplay}" Style="{StaticResource TimeEnd}"/>
                             </StackPanel>
-                            
+
                             <StackPanel Style="{StaticResource ControlPanel}">
                                 <Button Style="{StaticResource ShuffleButton}" Command="{Binding ShuffleCommand}">
                                     <Image Source="{StaticResource IconShuffle}"/>
@@ -149,7 +150,17 @@
                                 <Button Style="{StaticResource LoopButton}" Command="{Binding LoopCommand}">
                                     <Image Source="{StaticResource IconRepeat}"/>
                                 </Button>
+
+                            </StackPanel>
                         </StackPanel>
+                    </Viewbox>
+                </Grid>
+
+                <Grid Grid.Column="2">
+                    <Viewbox>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,20,10">
+                            <Image Source="{Binding VolumeIcon}" Style="{StaticResource VolumeIcon}" MouseLeftButtonUp="Mute_Click"/>
+                            <Slider Value="{Binding Volume, Mode=TwoWay}" Style="{StaticResource VolumeSlider}"/>
                         </StackPanel>
                     </Viewbox>
                 </Grid>

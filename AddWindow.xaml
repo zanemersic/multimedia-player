@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MultimedijskiPredvajalnik"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
-        Title="Multimedijski predvajalnik - Add" MinHeight="450" MinWidth="300" MaxHeight="450" MaxWidth="300" Background="#BF00FF">
+        Title="Multimedia Player - Add" MinHeight="450" MinWidth="300" MaxHeight="450" MaxWidth="300" Background="#BF00FF">
     <Grid Margin="20" Style="{StaticResource MagentaGrid}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

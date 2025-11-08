@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Icons\FullVolume.png" />
+    <None Remove="Icons\LowVolume.png" />
+    <None Remove="Icons\MidVolume.png" />
+    <None Remove="Icons\Muted.png" />
     <None Remove="Icons\next.png" />
     <None Remove="Icons\play.png" />
     <None Remove="Icons\previous.png" />
@@ -37,6 +41,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Icons\FullVolume.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\LowVolume.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\MidVolume.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Muted.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\next.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

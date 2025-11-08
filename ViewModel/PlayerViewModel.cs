@@ -22,6 +22,7 @@ namespace MultimedijskiPredvajalnik.ViewModel
         private bool isPlaying;
         private bool isLoopEnabled;
         private bool isShuffleEnabled;
+        private double volume = 100;
         public ObservableCollection<MediaFile> Playlist { get; set; }
 
 
@@ -35,6 +36,35 @@ namespace MultimedijskiPredvajalnik.ViewModel
                     selectedFile = value;
                     OnPropertyChanged();
                 }
+            }
+        }
+
+        public double Volume
+        {
+            get => volume;
+            set
+            {
+                if (volume != value)
+                {
+                    volume = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(VolumeIcon));
+                }
+            }
+        }
+
+        public string VolumeIcon
+        {
+            get
+            {
+                if (volume == 0)
+                    return "pack://application:,,,/Icons/Muted.png";
+                else if (volume <= 20)
+                    return "pack://application:,,,/Icons/LowVolume.png";
+                else if (volume <= 60)
+                    return "pack://application:,,,/Icons/MidVolume.png";
+                else
+                    return "pack://application:,,,/Icons/FullVolume.png";
             }
         }
 

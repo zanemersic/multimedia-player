@@ -57,6 +57,14 @@ namespace MultimedijskiPredvajalnik
             MediaPlayer.Play();
             vm.IsPlaying = true;
 
+            MediaPlayer.Volume = vm.Volume / 100.0;
+
+            vm.PropertyChanged += (s, args) =>
+            {
+                if (args.PropertyName == nameof(vm.Volume))
+                    MediaPlayer.Volume = vm.Volume / 100.0;
+            };
+
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.Tick += (s, _) =>
@@ -94,10 +102,18 @@ namespace MultimedijskiPredvajalnik
             }
         }
 
+        private void Mute_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (vm.Volume > 0)
+                vm.Volume = 0;
+            else
+                vm.Volume = 100;
+            MediaPlayer.Volume = vm.Volume / 100.0;
+        }
 
         private void MediaPlayer_MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
-            MessageBox.Show($"Napaka pri nalaganju videa: {e.ErrorException.Message}");
+            MessageBox.Show($"Error while loading video: {e.ErrorException.Message}");
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

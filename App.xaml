@@ -17,6 +17,7 @@
                 <ResourceDictionary Source="/Styles/Time.xaml"/>
                 <ResourceDictionary Source="/Styles/MediaElement.xaml"/>
                 <ResourceDictionary Source="/Styles/GridColor.xaml"/>
+                <ResourceDictionary Source="/Styles/VolumeSlider.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
