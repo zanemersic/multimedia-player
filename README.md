@@ -5,7 +5,6 @@ It supports video playback, playlist management, editing media entries, dynamic 
 
 ## 🎨 UI Preview
 ![App Preview](Images/image.png)
-![App Preview](Images/image2.png)
 
 ## ✨ Features
 
