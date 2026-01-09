@@ -1,14 +1,13 @@
 ﻿using MultimedijskiPredvajalnik.Models;
 using MultimedijskiPredvajalnik.MVVM;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Vosk;
+using NAudio;
+using System.Text.Json;
+using NAudio.Wave;
 
 namespace MultimedijskiPredvajalnik.ViewModel
 {
@@ -23,6 +22,9 @@ namespace MultimedijskiPredvajalnik.ViewModel
         private bool isLoopEnabled;
         private bool isShuffleEnabled;
         private double volume = 100;
+        private WaveInEvent? waveIn;
+        private VoskRecognizer? rec;
+        private Model? model;
         public ObservableCollection<MediaFile> Playlist { get; set; }
 
 
@@ -112,6 +114,7 @@ namespace MultimedijskiPredvajalnik.ViewModel
         public ICommand AddWindowCommand { get; }
         public ICommand EditWindowCommand { get; }
         public ICommand RemoveCommand { get; }  
+        public ICommand ToggleMicrophoneCommand {  get; }
 
         public PlayerViewModel()
         {
@@ -134,10 +137,98 @@ namespace MultimedijskiPredvajalnik.ViewModel
             EditWindowCommand = new RelayCommand(_ => OpenEditWindow(), _ => SelectedFile != null);
             EditCommand = new RelayCommand(_ => EditSelectedFile(), _ => SelectedFile != null);
             RemoveCommand = new RelayCommand(_ => RemoveSelectedFile(), _ => SelectedFile != null);
+            ToggleMicrophoneCommand = new RelayCommand(_ => StartSpeech());
 
             timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
             timer.Tick += UpdateSlider;
         }
+        public void StartSpeech()
+        {
+            model = new Model(@"C:\vosk-model-en-us-0.22");
+            rec = new VoskRecognizer(model, 16000);
+
+            waveIn = new WaveInEvent
+            {
+                DeviceNumber = 0,
+                WaveFormat = new WaveFormat(16000, 1),
+                BufferMilliseconds = 200 // 1000ms je počasi za komande
+            };
+
+            waveIn.DataAvailable += OnDataAvailable;
+            waveIn.StartRecording();
+        }
+
+        public void StopSpeech()
+        {
+            if (waveIn != null)
+            {
+                waveIn.DataAvailable -= OnDataAvailable;
+                waveIn.StopRecording();
+                waveIn.Dispose();
+                waveIn = null;
+            }
+
+            rec?.Dispose();
+            rec = null;
+
+            model?.Dispose();
+            model = null;
+        }
+
+        private void OnDataAvailable(object? sender, WaveInEventArgs e)
+        {
+            if (rec == null) return;
+
+            if (rec.AcceptWaveform(e.Buffer, e.BytesRecorded))
+            {
+                string json = rec.Result();
+
+                string text;
+                try
+                {
+                    using var doc = JsonDocument.Parse(json);
+                    text = doc.RootElement.TryGetProperty("text", out var t) ? (t.GetString() ?? "") : "";
+                }
+                catch
+                {
+                    return; // če Vosk vrne kaj čudnega, ignoriraj
+                }
+
+                text = text.Trim().ToLowerInvariant();
+                if (text.Length == 0) return;
+
+                Console.WriteLine($"Recognized: {text}");
+
+                switch (text)
+                {
+                    case "play":
+                        TogglePlayPause();
+                        break;
+
+                    case "stop":
+                        if (isPlaying) TogglePlayPause();
+                        break;
+
+                    case "next":
+                        PlayNext();
+                        break;
+
+                    case "previous":
+                    case "back":
+                        PlayPrevious();
+                        break;
+
+                    case "loop":
+                        PlayLoop();
+                        break;
+
+                    case "shuffle":
+                        PlayShuffle();
+                        break;
+                }
+            }
+        }
+
         public void PlayNext()
         {
             if (Playlist.Count == 0) return;

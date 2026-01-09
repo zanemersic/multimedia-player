@@ -18,6 +18,8 @@
                 <ResourceDictionary Source="/Styles/MediaElement.xaml"/>
                 <ResourceDictionary Source="/Styles/GridColor.xaml"/>
                 <ResourceDictionary Source="/Styles/VolumeSlider.xaml"/>
+                <ResourceDictionary Source="/Styles/CommandText.xaml"/>
+                <ResourceDictionary Source="/Styles/MicrophoneButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

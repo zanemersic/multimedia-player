@@ -14,6 +14,8 @@
   <ItemGroup>
     <None Remove="Icons\FullVolume.png" />
     <None Remove="Icons\LowVolume.png" />
+    <None Remove="Icons\Microphone.png" />
+    <None Remove="Icons\MicrophoneOn.png" />
     <None Remove="Icons\MidVolume.png" />
     <None Remove="Icons\Muted.png" />
     <None Remove="Icons\next.png" />
@@ -45,6 +47,12 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\LowVolume.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\Microphone.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\MicrophoneOn.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icons\MidVolume.png">
@@ -105,6 +113,11 @@
 
   <ItemGroup>
     <Folder Include="View\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="Vosk" Version="0.3.38" />
   </ItemGroup>
 
 </Project>
