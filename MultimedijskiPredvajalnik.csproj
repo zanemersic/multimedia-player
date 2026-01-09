@@ -117,6 +117,7 @@
 
   <ItemGroup>
     <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="System.Speech" Version="10.0.1" />
     <PackageReference Include="Vosk" Version="0.3.38" />
   </ItemGroup>
 

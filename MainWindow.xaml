@@ -115,19 +115,25 @@
 
                     <Grid Grid.Row="1" Background="#212121">
                         <Viewbox Stretch="Uniform">
-                        <StackPanel>
+                            <ItemsControl ItemsSource="{Binding AvailableVoiceCommands}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
 
-                            <TextBlock Text="Play" Style="{StaticResource CommandText}"/>
-                            <TextBlock Text="Stop" Style="{StaticResource CommandText}"/>
-                            <TextBlock Text="Next" Style="{StaticResource CommandText}"/>
-                            <TextBlock Text="Previous" Style="{StaticResource CommandText}"/>
-                            <TextBlock Text="Loop" Style="{StaticResource CommandText}"/>
-                            <TextBlock Text="Shuffle" Style="{StaticResource CommandText}"/>
-                            <TextBlock Text="Remove &lt;Name&gt;" Style="{StaticResource CommandText}"/>
-
-                        </StackPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Text="{Binding}"
+                                            Style="{StaticResource CommandText}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </Viewbox>
                     </Grid>
+
+
                 </Grid>
 
             </Grid>

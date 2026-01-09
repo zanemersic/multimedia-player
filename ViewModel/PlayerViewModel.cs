@@ -8,6 +8,7 @@ using Vosk;
 using NAudio;
 using System.Text.Json;
 using NAudio.Wave;
+using MultimedijskiPredvajalnik.Core;
 
 namespace MultimedijskiPredvajalnik.ViewModel
 {
@@ -22,10 +23,9 @@ namespace MultimedijskiPredvajalnik.ViewModel
         private bool isLoopEnabled;
         private bool isShuffleEnabled;
         private double volume = 100;
-        private WaveInEvent? waveIn;
-        private VoskRecognizer? rec;
-        private Model? model;
+        private string voiceState = "Running";
         public ObservableCollection<MediaFile> Playlist { get; set; }
+        public ObservableCollection<string> AvailableVoiceCommands { get; }
 
 
         public MediaFile? SelectedFile
@@ -35,8 +35,14 @@ namespace MultimedijskiPredvajalnik.ViewModel
             {
                 if (selectedFile != value)
                 {
+                    if (selectedFile == value) return;
                     selectedFile = value;
                     OnPropertyChanged();
+                    var newState = value == null
+                        ? AppState.Running
+                        : AppState.ItemSelected;
+
+                    SetVoiceState(newState);
                 }
             }
         }
@@ -102,6 +108,16 @@ namespace MultimedijskiPredvajalnik.ViewModel
             set { isShuffleEnabled = value; OnPropertyChanged(); }
         }
 
+        public string VoiceState
+        {
+            get => voiceState;
+            set
+            {
+                voiceState = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand TogglePlayPauseCommand { get; }
         public ICommand NextCommand { get; }
         public ICommand PreviousCommand { get; }
@@ -125,6 +141,9 @@ namespace MultimedijskiPredvajalnik.ViewModel
                 new MediaFile { Title = "Snowfall", Author = "Oneheart", Path = "Resources/snowfall.mp4", Cover = "pack://application:,,,/Resources/snowfall.png" }
             };
 
+            AvailableVoiceCommands = [];
+            SetVoiceState(AppState.Running);
+
             ExitCommand = new RelayCommand(_ => Application.Current.Shutdown());
             TogglePlayPauseCommand = new RelayCommand(_ => TogglePlayPause());
             NextCommand = new RelayCommand(_ => PlayNext());
@@ -137,98 +156,11 @@ namespace MultimedijskiPredvajalnik.ViewModel
             EditWindowCommand = new RelayCommand(_ => OpenEditWindow(), _ => SelectedFile != null);
             EditCommand = new RelayCommand(_ => EditSelectedFile(), _ => SelectedFile != null);
             RemoveCommand = new RelayCommand(_ => RemoveSelectedFile(), _ => SelectedFile != null);
-            ToggleMicrophoneCommand = new RelayCommand(_ => StartSpeech());
 
             timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
             timer.Tick += UpdateSlider;
         }
-        public void StartSpeech()
-        {
-            model = new Model(@"C:\vosk-model-en-us-0.22");
-            rec = new VoskRecognizer(model, 16000);
-
-            waveIn = new WaveInEvent
-            {
-                DeviceNumber = 0,
-                WaveFormat = new WaveFormat(16000, 1),
-                BufferMilliseconds = 200 // 1000ms je počasi za komande
-            };
-
-            waveIn.DataAvailable += OnDataAvailable;
-            waveIn.StartRecording();
-        }
-
-        public void StopSpeech()
-        {
-            if (waveIn != null)
-            {
-                waveIn.DataAvailable -= OnDataAvailable;
-                waveIn.StopRecording();
-                waveIn.Dispose();
-                waveIn = null;
-            }
-
-            rec?.Dispose();
-            rec = null;
-
-            model?.Dispose();
-            model = null;
-        }
-
-        private void OnDataAvailable(object? sender, WaveInEventArgs e)
-        {
-            if (rec == null) return;
-
-            if (rec.AcceptWaveform(e.Buffer, e.BytesRecorded))
-            {
-                string json = rec.Result();
-
-                string text;
-                try
-                {
-                    using var doc = JsonDocument.Parse(json);
-                    text = doc.RootElement.TryGetProperty("text", out var t) ? (t.GetString() ?? "") : "";
-                }
-                catch
-                {
-                    return; // če Vosk vrne kaj čudnega, ignoriraj
-                }
-
-                text = text.Trim().ToLowerInvariant();
-                if (text.Length == 0) return;
-
-                Console.WriteLine($"Recognized: {text}");
-
-                switch (text)
-                {
-                    case "play":
-                        TogglePlayPause();
-                        break;
-
-                    case "stop":
-                        if (isPlaying) TogglePlayPause();
-                        break;
-
-                    case "next":
-                        PlayNext();
-                        break;
-
-                    case "previous":
-                    case "back":
-                        PlayPrevious();
-                        break;
-
-                    case "loop":
-                        PlayLoop();
-                        break;
-
-                    case "shuffle":
-                        PlayShuffle();
-                        break;
-                }
-            }
-        }
-
+        
         public void PlayNext()
         {
             if (Playlist.Count == 0) return;
@@ -468,6 +400,40 @@ namespace MultimedijskiPredvajalnik.ViewModel
             }
         }
 
+        public void SetVoiceState(AppState state)
+        {
+            VoiceState = state switch
+            {
+                AppState.Running => "Running",
+                AppState.ItemSelected => "Item Selected",
+                _ => VoiceState
+            };
 
+            AvailableVoiceCommands.Clear();
+
+            switch (state)
+            {
+                case AppState.Running:
+                    AvailableVoiceCommands.Add("play");
+                    AvailableVoiceCommands.Add("stop");
+                    AvailableVoiceCommands.Add("next");
+                    AvailableVoiceCommands.Add("previous");
+                    AvailableVoiceCommands.Add("select");
+                    AvailableVoiceCommands.Add("add");
+                    AvailableVoiceCommands.Add("exit");
+                    break;
+
+                case AppState.ItemSelected:
+                    AvailableVoiceCommands.Add("play");
+                    AvailableVoiceCommands.Add("stop");
+                    AvailableVoiceCommands.Add("next");
+                    AvailableVoiceCommands.Add("previous");
+                    AvailableVoiceCommands.Add("remove");
+                    AvailableVoiceCommands.Add("add");
+                    AvailableVoiceCommands.Add("edit");
+                    AvailableVoiceCommands.Add("exit");
+                    break;
+            }
+        }
     }
 }

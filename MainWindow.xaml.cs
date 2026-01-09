@@ -1,4 +1,5 @@
-﻿using MultimedijskiPredvajalnik.Models;
+﻿using MultimedijskiPredvajalnik.Controllers;
+using MultimedijskiPredvajalnik.Models;
 using MultimedijskiPredvajalnik.ViewModel;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -6,6 +7,10 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Speech.Synthesis;
+
+using MultimedijskiPredvajalnik.Core;
+using System.Diagnostics;
 
 namespace MultimedijskiPredvajalnik
 {
@@ -13,9 +18,20 @@ namespace MultimedijskiPredvajalnik
     {
 
         private PlayerViewModel vm;
+        private readonly SpeechController speech;
+        private readonly SpeechSynthesizer voice = new();
+
         public MainWindow()
         {
             InitializeComponent();
+
+            speech = new SpeechController();
+            speech.SpeechRecognized += OnSpeechCommandRecognized;
+            speech.Start();
+
+            voice.Rate = 0;
+            voice.Volume = 80;
+
             vm = new PlayerViewModel();
             DataContext = vm;
 
@@ -37,6 +53,116 @@ namespace MultimedijskiPredvajalnik
                     }
                 }
             };
+        }
+
+        private void OnSpeechCommandRecognized(VoiceCommand command)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (DataContext is not PlayerViewModel vm)
+                    return;
+
+                if (vm.SelectedFile == null)
+                {
+                    HandleRunning(command, vm);
+                } else
+                {
+                    HandleSelected(command, vm);
+                }
+            });
+        }
+
+        private void HandleRunning(VoiceCommand command, PlayerViewModel vm)
+        {
+            switch (command)
+            {
+                case VoiceCommand.Play:
+                    vm.TogglePlayPauseCommand.Execute(null);
+                    break;
+
+                case VoiceCommand.Stop:
+                    if (!vm.IsPlaying) break;
+                    vm.TogglePlayPauseCommand.Execute(null);
+                    break;
+
+                case VoiceCommand.Next:
+                    vm.NextCommand.Execute(null);
+                    Speak("Playing next media");
+                    break;
+
+                case VoiceCommand.Previous:
+                    vm.PreviousCommand.Execute(null);
+                    Speak("Playing next media");
+                    break;
+
+                case VoiceCommand.Select:
+                    if (vm.Playlist.Count > 0)
+                    {
+                        PlaylistView.SelectedIndex = 0;
+                        Speak("Selected Media");
+                    }
+                    break;
+
+                case VoiceCommand.Add:
+                    vm.AddCommand.Execute(null);
+                    Speak("Added new media");
+                    break;
+
+
+                case VoiceCommand.Exit:
+                    vm.ExitCommand.Execute(null);
+                    break;
+            }
+        }
+
+        private void HandleSelected(VoiceCommand command, PlayerViewModel vm)
+        {
+            switch (command)
+            {
+                case VoiceCommand.Play:
+                    vm.TogglePlayPauseCommand.Execute(null);
+                    break;
+
+                case VoiceCommand.Stop:
+                    if (!vm.IsPlaying) break;
+                    vm.TogglePlayPauseCommand.Execute(null);
+                    break;
+
+                case VoiceCommand.Next:
+                    vm.NextCommand.Execute(null);
+                    Speak("Playing next media");
+                    break;
+
+                case VoiceCommand.Previous:
+                    vm.PreviousCommand.Execute(null);
+                    Speak("Playing previous media");
+                    break;
+
+                case VoiceCommand.Remove:
+                    vm.RemoveCommand.Execute(null);
+                    Speak("Removed media");
+                    break;
+
+                case VoiceCommand.Add:
+                    vm.AddCommand.Execute(null);
+                    Speak("Added new media");
+                    break;
+
+                case VoiceCommand.Edit:
+                    vm.EditCommand.Execute(null);
+                    Speak("Edited selected media");
+                    break;
+
+                case VoiceCommand.Exit:
+                    vm.ExitCommand.Execute(null);
+                    break;
+            }
+        }
+
+        private void Speak(string text)
+        {
+            voice.SpeakAsyncCancelAll();
+            voice.SpeakAsync(text);
         }
 
         private void MediaPlayer_MediaOpened(object sender, RoutedEventArgs e)
